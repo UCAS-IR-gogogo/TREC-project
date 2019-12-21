@@ -128,7 +128,11 @@ if __name__=="__main__":
     examples = dataset_to_preprocessed_structure(txt_dirs)
 
 #%% pandas更好处理
-    # df = DataFrame(examples)
+    df = DataFrame(examples)
+#%% 提取所有的疾病
+    disease = set(df["condition"])
+    with open("disease.txt", "w") as f:
+        f.write("\n".join(list(disease- {None})))
 #%%
     # 提取基因。目前的问题是类似 'DISCRIPTION:'这样以冒号的全大写子标题也会被提出来
     # r_gene = re.compile(r"([A-Z]+[-A-Z0-9]+)")
