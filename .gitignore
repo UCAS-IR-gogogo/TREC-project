@@ -7,4 +7,5 @@
 *.iml
 out
 gen
-data
+data/clinicaltrials_txt
+data/clinicaltrials_xml

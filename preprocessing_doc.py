@@ -9,9 +9,13 @@ import re
 from tqdm import tqdm
 import pandas as pd
 from pandas import DataFrame
+import json
 
 from configs.config import config
 #%%
+
+with open(config.disease_translate_dict_path) as f:
+    translate_dict = json.load(f)
 
 #%% 用正则表达式把txt文件里的对应的域提取出来
 def txt_to_structure(txt_path: Path):
@@ -45,6 +49,7 @@ def txt_to_structure(txt_path: Path):
         "ntc_id": ntc_id,
         "title": title,
         "condition": condition,
+        "condition_chinese": "",  # 疾病中文名
         "intervention": intervention,
         "summary": summary,
         "detailed_description": detailed_description,
@@ -99,6 +104,14 @@ def preprocessing_gender(example:dict):
         example['gender']='Any'
     return example
 
+def preprocessing_condition_chinese(example: dict):
+    condition = example["condition"]
+    example["condition_chinese"] = translate_dict[condition.strip()] if condition is not None else ""
+    return example
+
+def is_cancer(disease_chinese: str):
+    result = "瘤" in disease_chinese or "癌" in disease_chinese or "白血病" in disease_chinese
+    return result
 
 def dataset_to_preprocessed_structure(txt_dirs):
     examples = []
@@ -115,6 +128,7 @@ def dataset_to_preprocessed_structure(txt_dirs):
                     example = preprocessing_age(example)
                     example = preprocessing_gender(example)
                     example = preprocessing_None(example)
+                    example = preprocessing_condition_chinese(example)
                     examples.append(example)
                 except:
                     print(file)
@@ -130,9 +144,10 @@ if __name__=="__main__":
 #%% pandas更好处理
     df = DataFrame(examples)
 #%% 提取所有的疾病
-    disease = set(df["condition"])
-    with open("disease.txt", "w") as f:
-        f.write("\n".join(list(disease- {None})))
+    # disease = set(df["condition"])
+    # with open("disease.txt", "w") as f:
+    #     f.write("\n".join(list(disease- {None})))
+
 #%%
     # 提取基因。目前的问题是类似 'DISCRIPTION:'这样以冒号的全大写子标题也会被提出来
     # r_gene = re.compile(r"([A-Z]+[-A-Z0-9]+)")

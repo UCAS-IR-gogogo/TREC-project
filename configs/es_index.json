@@ -14,6 +14,10 @@
                             "type": "text",
                             "index": "true"
                         },
+                        "condition_chinese": {
+                            "type": "text",
+                            "index": "true"
+                        },
                         "intervention": {
                             "type": "text",
                             "index": "true"

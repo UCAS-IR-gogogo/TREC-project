@@ -36,7 +36,7 @@ def import_examples_into_es(examples: list):
             "_source": examples[i]
         }
 
-    for i in tqdm(range(ceil(len(examples) / buck_size))):
+    for i in tqdm(range(ceil(len(examples) / buck_size)), desc="Import into ES"):
         bulk(es, actions=examples[i * buck_size: min((i + 1) * buck_size, len(examples))])
 
 #%%
