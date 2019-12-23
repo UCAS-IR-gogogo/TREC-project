@@ -31,17 +31,50 @@ def topics_to_preprocessed_structure(xml_path: str):
         age = int(r_age.findall(demographic)[0])
         r_gender = re.compile(r"-year-old (.*)")
         gender = r_gender.findall(demographic)[0]
+
+        gene_and_variant = gene.split(",")
+        gene_and_variant_list = []
+        for gv in gene_and_variant:
+            # 括号里的变体
+            gene_variant = []
+            re_K括号里的variant = re.compile(r"\((.*)\)")
+            K括号里的variant = re_K括号里的variant.findall(gv)
+            gene_variant += K括号里的variant
+            # 类似于基因的东西（大写字母+数字+横线，可能后面还有些小写字母）
+            re_L类似于gene的东西 = re.compile(r"([A-Z][A-Z0-9\-_]+[A-Z0-9a-z]*)")
+            L类似于gene的东西 = re_L类似于gene的东西.findall(gv)
+            gene_gene = [g for g in L类似于gene的东西 if g not in K括号里的variant]
+            # 去掉基因，以及括号里的变体，剩下的东西也作为变体
+            S剩余variant = gv
+            for g in L类似于gene的东西:
+                S剩余variant = S剩余variant.replace(g, "")
+            S剩余variant = S剩余variant.replace("(", "").replace(")", "").strip()
+            if S剩余variant:
+                gene_variant.append(S剩余variant)
+            dc = {
+                "gene": gene_gene[0] if len(gene_gene)>0 else "",
+                "variant": gene_variant,
+            }
+            gene_and_variant_list.append(dc)
+
+
         new_topic = {
             "topic_id": topic_id,
             "disease": disease,
             "gene": gene,
             "age": age,
-            "gender": gender
+            "gender": gender,
+
+            "gene_variant": gene_and_variant_list
         }
         topics.append(new_topic)
     return topics
 
 
 if __name__ == "__main__":
-    xml_file_path = config.topic_path[2018]
-    topics = topics_to_preprocessed_structure(xml_file_path)
+    topics ={2017: topics_to_preprocessed_structure(config.topic_path[2017]),
+             2018: topics_to_preprocessed_structure(config.topic_path[2018])}
+    for t in topics[2018]:
+        print(t["gene"])
+        print(t["gene_variant"])
+        print("")
