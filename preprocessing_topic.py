@@ -24,8 +24,8 @@ def topics_to_preprocessed_structure(xml_path: str):
     topics = []
     for xml_topic in root.findall("topic"):
         topic_id = int(xml_topic.attrib['number'])
-        disease = xml_topic.find("disease").text
-        gene = xml_topic.find("gene").text
+        disease = xml_topic.find("disease").text.replace("-", "_")
+        gene = xml_topic.find("gene").text.replace("-", "_")
         demographic = xml_topic.find("demographic").text
         r_age = re.compile(r"(.*)-year-old")
         age = int(r_age.findall(demographic)[0])

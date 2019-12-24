@@ -10,7 +10,7 @@ class ConfigClass(object):
     type_name = "document"
     buck_size = 10000  # 导入es的批大小
     es_url = "localhost:9200"
-    es_index_json = base / "configs/es_index.json"
+    es_index_json = base / "configs/es_index_english.json"
     es_search_json = base / "configs/es_search.json"
     doc_txt_dir = base / "data/clinicaltrials_txt"
     doc_xml_dir = base / "data/clinicaltrials_xml"
