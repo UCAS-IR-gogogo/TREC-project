@@ -4,7 +4,7 @@
 #%%
 from pathlib import Path
 
-base = Path(".")
+base = Path(__file__).parent.parent
 class ConfigClass(object):
     index_name = "trials"  # index名字
     type_name = "document"

@@ -12,9 +12,12 @@ Created on Mon Nov 25 14:44:49 2019
 from pathlib import Path
 import xml.etree.ElementTree as ET
 import re
+import json
 
 from configs.config import config
 
+with open(config.disease_translate_dict_path) as f:
+    translate_dict = json.load(f)
 
 #%%
 # 把xml文件提取成list of topic
@@ -65,7 +68,7 @@ def topics_to_preprocessed_structure(xml_path: str):
             "age": age,
             "gender": gender,
 
-            "gene_variant": gene_and_variant_list
+            "gene_variant": gene_and_variant_list,
         }
         topics.append(new_topic)
     return topics
