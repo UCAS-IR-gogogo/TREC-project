@@ -24,16 +24,16 @@ def txt_to_structure(txt_path: Path):
     r_ntc_id = re.compile("(NCT.*)\.txt")
     ntc_id = r_ntc_id.findall(txt_path.name)[0]
     r_title = re.compile("TITLE:\n([\d\D]*)\n{1,}CONDITION")
-    title = r_title.findall(txt)[0].strip()
+    title = r_title.findall(txt)[0].strip().replace("-", "_")
     r_condition = re.compile("CONDITION:\n([\d\D]*)\n{1,}INTERVENTION:")
-    condition = r_condition.findall(txt)[0].replace('\n','').replace('\r','')
+    condition = r_condition.findall(txt)[0].replace('\n','').replace('\r','').replace("-", "_")
     r_intervention = re.compile("INTERVENTION:\n([\d\D]*)\n{1,}SUMMARY:")
-    intervention = r_intervention.findall(txt)[0].replace('\n','').replace('\r','')
+    intervention = r_intervention.findall(txt)[0].replace('\n','').replace('\r','').replace("-", "_")
     r_summary = re.compile("SUMMARY:\n([\d\D]*)\n{1,}DETAILED DESCRIPTION:")
-    summary = r_summary.findall(txt)[0].replace('\n','').replace('\r','').strip()
+    summary = r_summary.findall(txt)[0].replace('\n','').replace('\r','').strip().replace("-", "_")
     summary=re.sub(r'\s{2,}',' ',summary)
     r_detailed_description = re.compile("DETAILED DESCRIPTION:\n([\d\D]*)\n{1,}ELIGIBILITY:")
-    detailed_description = r_detailed_description.findall(txt)[0].replace('\n','').replace('\r','').strip()
+    detailed_description = r_detailed_description.findall(txt)[0].replace('\n','').replace('\r','').strip().replace("-", "_")
     detailed_description=re.sub(r'\s{2,}',' ',detailed_description)
     r_gender = re.compile("ELIGIBILITY:(?:[\d\D]*)\nGender: (.*)\n")
     gender = r_gender.findall(txt)[0].strip()
@@ -41,7 +41,7 @@ def txt_to_structure(txt_path: Path):
     r_age = re.compile("ELIGIBILITY:(?:[\d\D]*)\nAge:(.*)\n")
     age = r_age.findall(txt)[0].strip()
     r_criteria = re.compile("ELIGIBILITY:(?:[\d\D]*)\nCriteria:\n([\d\D]*)\n{1,}")
-    criteria = r_criteria.findall(txt)[0].replace('\n','').replace('\r','').strip()
+    criteria = r_criteria.findall(txt)[0].replace('\n','').replace('\r','').strip().replace("-", "_")
     criteria=re.sub(r'\s{2,}',' ',criteria)
 
     # 每个txt文件提取后对应一个example
@@ -144,9 +144,9 @@ if __name__=="__main__":
 #%% pandas更好处理
     df = DataFrame(examples)
 #%% 提取所有的疾病
-    # disease = set(df["condition"])
-    # with open("disease.txt", "w") as f:
-    #     f.write("\n".join(list(disease- {None})))
+    disease = set(df["condition"])
+    with open("./data/disease.txt", "w") as f:
+        f.write("\n".join(list(disease- {None})))
 
 #%%
     # 提取基因。目前的问题是类似 'DISCRIPTION:'这样以冒号的全大写子标题也会被提出来

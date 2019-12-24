@@ -1,0 +1,59 @@
+{
+            "mappings": {
+                "document": {
+                    "properties": {
+                        "ntc_id": {
+                            "type": "keyword",
+                            "index": "true"
+                        },
+                        "title": {
+                            "type": "text",
+                            "analyzer": "english",
+                            "index": "true"
+                        },
+                        "condition": {
+                            "type": "text",
+                            "analyzer": "english",
+                            "index": "true"
+                        },
+                        "condition_chinese": {
+                            "type": "text",
+                            "analyzer": "standard",
+                            "index": "true"
+                        },
+                        "intervention": {
+                            "type": "text",
+                            "analyzer": "english",
+                            "index": "true"
+                        },
+                        "summary": {
+                            "type": "text",
+                            "analyzer": "english",
+                            "index": "true"
+                        },
+                        "detailed_description": {
+                            "type": "text",
+                            "analyzer": "english",
+                            "index": "true"
+                        },
+                        "gender": {
+                            "type": "keyword",
+                            "index": "true"
+                        },
+                        "min_age": {
+                            "type": "integer",
+                            "index": "true"
+                        },
+                        "max_age": {
+                            "type": "integer",
+                            "index": "true"
+                        },
+                        "criteria": {
+                            "type": "text",
+                            "analyzer": "english",
+                            "index": "true"
+                        }
+                    }
+                }
+            }
+}
