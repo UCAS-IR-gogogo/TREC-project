@@ -4,19 +4,20 @@ import os
 
 from configs.config import config
 
-
+# 将查询结果写入为trec runs文件
 def write2file(data, runs_file_path: Path or str):
     f = open(runs_file_path, 'w', encoding='utf-8')
     for i in range(len(data)):
         topic = data[i]
         for j, dict in enumerate(topic):
-            topic_id = str(i)
+            topic_id = str(i+1)
             doc_id = dict['ntc_id']
             score = round(dict['_score'], 4)
             res = " ".join([topic_id, 'Q0', doc_id, str(j), str(score), 'my_run'])
             f.writelines([res + '\n'])
     f.close()
 
+# python的trectools运行评测指标
 def trec_eval(runs_file_path: Path or str, qrels_file_path: Path or str):
     metrics = dict()
     r1 = TrecRun(str(runs_file_path.absolute()))
@@ -29,6 +30,7 @@ def trec_eval(runs_file_path: Path or str, qrels_file_path: Path or str):
     metrics["map"] = results.get_map()
     return metrics
 
+# 编译并运行c语言版trec_eval，读取重定向的评测结果返回
 def trec_eval_shell(runs_file_path: Path or str, qrels_file_path: Path or str, eval_file_path: Path or str):
     # 编译trec_eval文件
     command_compile_trec = f"""cd {config.trec_eval_source.absolute()} && make clean && make && mv {(config.trec_eval_source / "trec_eval").absolute()} {config.trec_eval_bin}"""

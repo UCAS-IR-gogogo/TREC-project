@@ -25,5 +25,6 @@ class ConfigClass(object):
                     2018: base / "output/eval-2018.txt",}
     trec_eval_source: Path = base / "trec_eval-9.0.7"
     trec_eval_bin: Path = base / "trec_eval"
+    deep_model_dir: Path = base / "deep_model"
 
 config = ConfigClass()

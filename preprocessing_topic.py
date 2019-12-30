@@ -24,7 +24,8 @@ with open(config.disease_translate_dict_path) as f:
 def topics_to_preprocessed_structure(xml_path: str):
     xml = ET.parse(xml_path)
     root = xml.getroot()
-    topics = []
+    # topics = []
+    topics_dict = dict()
     for xml_topic in root.findall("topic"):
         topic_id = int(xml_topic.attrib['number'])
         disease = xml_topic.find("disease").text
@@ -70,8 +71,10 @@ def topics_to_preprocessed_structure(xml_path: str):
 
             "gene_variant": gene_and_variant_list,
         }
-        topics.append(new_topic)
-    return topics
+        # topics.append(new_topic)
+        topics_dict[topic_id] = new_topic
+    # return topics
+    return topics_dict
 
 
 def input_topic():
