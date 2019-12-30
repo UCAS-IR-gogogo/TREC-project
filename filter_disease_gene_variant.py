@@ -52,3 +52,4 @@ if __name__=="__main__":
     topics = topics_to_preprocessed_structure(config.topic_path[2018])
     result_of_each_topic = es_search(topics)
     result_of_each_topic = filter_disease_gene_variant(result_of_each_topic)
+

@@ -314,6 +314,7 @@ def es_search_by_topic(topic: dict):
                 # 只保留这三个域
                 new_doc = {
                     "ntc_id": doc["_source"]["ntc_id"],
+                    "title": doc["_source"]["title"],
                     "summary": doc["_source"]["summary"],
                     "_score": doc["_score"],
                 }
