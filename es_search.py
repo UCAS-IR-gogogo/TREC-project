@@ -316,6 +316,7 @@ def es_search_by_topic(topic: dict):
                     "ntc_id": doc["_source"]["ntc_id"],
                     "title": doc["_source"]["title"],
                     "summary": doc["_source"]["summary"],
+                    "detailed_description": doc["_source"]["detailed_description"],
                     "_score": doc["_score"],
                 }
                 doc_list.append(new_doc)

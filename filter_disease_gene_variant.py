@@ -7,6 +7,7 @@ from configs.config import config
 from preprocessing_topic import topics_to_preprocessed_structure
 from es_search import es_search
 
+# 对一个topic的doc进行整合
 def filter_disease_gene_variant_by_topic(result_of_topic: dict):
     # 疾病 + 基因 + 变体
     # 疾病 + 基因(如果疾病 + 基因是0则返回疾病 + 变体)
@@ -26,7 +27,7 @@ def filter_disease_gene_variant_by_topic(result_of_topic: dict):
         else:
             new_docs_dict[doc["ntc_id"]]["_score"] += doc["_score"]
 
-    new_docs_dict = OrderedDict()
+    new_docs_dict = dict()
     for query_condition in keys_order:
         for doc in result_of_topic[query_condition]:
             append_doc(doc, new_docs_dict)
@@ -37,8 +38,11 @@ def filter_disease_gene_variant_by_topic(result_of_topic: dict):
         for doc in result_of_topic[query_condition]:
             append_doc(doc, new_docs_dict)
 
+    new_docs_dict = sorted(new_docs_dict.values(), key=lambda x:x["_score"], reverse=True)
     return new_docs_dict
 
+
+# 对每个topic的doc都进行整合
 def filter_disease_gene_variant(result_of_each_topic: list):
     new_result_of_each_topic = []
     for i,r in enumerate(result_of_each_topic):
@@ -49,7 +53,9 @@ def filter_disease_gene_variant(result_of_each_topic: list):
 
 
 if __name__=="__main__":
-    topics = topics_to_preprocessed_structure(config.topic_path[2018])
-    result_of_each_topic = es_search(topics)
-    result_of_each_topic = filter_disease_gene_variant(result_of_each_topic)
+    topics: list = topics_to_preprocessed_structure(config.topic_path[2018])
+    result_of_each_topic:list = es_search(topics)
+    result_of_each_topic: list = filter_disease_gene_variant(result_of_each_topic)
+    # topic0 = result_of_each_topic[0].values()
+    # print(topic0[1])
 
