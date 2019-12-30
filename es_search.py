@@ -49,23 +49,23 @@ def es_search_by_topic(topic: dict):
         #     "size": 3000,
         # },
 
-        "基因变体的原始字段": {
-            "query": {
-                "bool": {
-                    "must": [
-                        {"bool": {
-                            "should": [
-                                {"match": {"title": gene_raw}},
-                                {"match": {"summary": gene_raw}},
-                                {"match": {"detailed_description": gene_raw}},
-                                {"match": {"criteria": gene_raw}}
-                            ]
-                        }}
-                    ]
-                }
-            },
-            "size": query_return_size,
-        },
+        # "基因变体的原始字段": {
+        #     "query": {
+        #         "bool": {
+        #             "must": [
+        #                 {"bool": {
+        #                     "should": [
+        #                         {"match": {"title": gene_raw}},
+        #                         {"match": {"summary": gene_raw}},
+        #                         {"match": {"detailed_description": gene_raw}},
+        #                         {"match": {"criteria": gene_raw}}
+        #                     ]
+        #                 }}
+        #             ]
+        #         }
+        #     },
+        #     "size": query_return_size,
+        # },
 
         "基因": {
             "query": {
@@ -103,85 +103,85 @@ def es_search_by_topic(topic: dict):
             "size": query_return_size,
         },
 
-        "疾病+基因变体原始字段(最严格不分词)": {
-            "query": {
-                "bool": {
-                    "must": [
-                        {"bool": {
-                            "should": [
-                                {"term": {"title": disease}},
-                                {"term": {"summary": disease}},
-                                {"term": {"detailed_description": disease}},
-                                {"term": {"criteria": disease}},
-                                {"term": {"condition": disease}},
-                            ]
-                        }},
-                        {"bool": {
-                            "should": [
-                                {"match": {"title": gene_raw}},
-                                {"match": {"summary": gene_raw}},
-                                {"match": {"detailed_description": gene_raw}},
-                                {"match": {"criteria": gene_raw}}
-                            ]
-                        }}
-                    ]
-                }
-            },
-            "size": query_return_size,
-        },
-        "疾病+基因变体原始字段(严格但可以分词)": {
-            "query": {
-                "bool": {
-                    "must": [
-                        {"bool": {
-                            "should": [
-                                {"match_phrase": {"title": {"query": disease, "slop": 10}}},
-                                {"match_phrase": {"summary": {"query": disease, "slop": 10}}},
-                                {"match_phrase": {"detailed_description": {"query": disease, "slop": 10}}},
-                                {"match_phrase": {"criteria": {"query": disease, "slop": 10}}},
-                                {"match_phrase": {"condition": {"query": disease, "slop": 10}}},
-                            ]
-                        }},
-                        {"bool": {
-                            "should": [
-                                {"match": {"title": gene_raw}},
-                                {"match": {"summary": gene_raw}},
-                                {"match": {"detailed_description": gene_raw}},
-                                {"match": {"criteria": gene_raw}}
-                            ]
-                        }}
-                    ]
-                }
-            },
-            "size": query_return_size,
-        },
-
-        "疾病+基因变体原始字段(不严格匹配)": {
-            "query": {
-                "bool": {
-                    "must": [
-                        {"bool": {
-                            "should": [
-                                {"match": {"title": disease}},
-                                {"match": {"summary": disease}},
-                                {"match": {"detailed_description": disease}},
-                                {"match": {"criteria": disease}},
-                                {"match": {"condition": disease}},
-                            ]
-                        }},
-                        {"bool": {
-                            "should": [
-                                {"match": {"title": gene_raw}},
-                                {"match": {"summary": gene_raw}},
-                                {"match": {"detailed_description": gene_raw}},
-                                {"match": {"criteria": gene_raw}}
-                            ]
-                        }}
-                    ]
-                }
-            },
-            "size": query_return_size,
-        },
+        # "疾病+基因变体原始字段(最严格不分词)": {
+        #     "query": {
+        #         "bool": {
+        #             "must": [
+        #                 {"bool": {
+        #                     "should": [
+        #                         {"term": {"title": disease}},
+        #                         {"term": {"summary": disease}},
+        #                         {"term": {"detailed_description": disease}},
+        #                         {"term": {"criteria": disease}},
+        #                         {"term": {"condition": disease}},
+        #                     ]
+        #                 }},
+        #                 {"bool": {
+        #                     "should": [
+        #                         {"match": {"title": gene_raw}},
+        #                         {"match": {"summary": gene_raw}},
+        #                         {"match": {"detailed_description": gene_raw}},
+        #                         {"match": {"criteria": gene_raw}}
+        #                     ]
+        #                 }}
+        #             ]
+        #         }
+        #     },
+        #     "size": query_return_size,
+        # },
+        # "疾病+基因变体原始字段(严格但可以分词)": {
+        #     "query": {
+        #         "bool": {
+        #             "must": [
+        #                 {"bool": {
+        #                     "should": [
+        #                         {"match_phrase": {"title": {"query": disease, "slop": 10}}},
+        #                         {"match_phrase": {"summary": {"query": disease, "slop": 10}}},
+        #                         {"match_phrase": {"detailed_description": {"query": disease, "slop": 10}}},
+        #                         {"match_phrase": {"criteria": {"query": disease, "slop": 10}}},
+        #                         {"match_phrase": {"condition": {"query": disease, "slop": 10}}},
+        #                     ]
+        #                 }},
+        #                 {"bool": {
+        #                     "should": [
+        #                         {"match": {"title": gene_raw}},
+        #                         {"match": {"summary": gene_raw}},
+        #                         {"match": {"detailed_description": gene_raw}},
+        #                         {"match": {"criteria": gene_raw}}
+        #                     ]
+        #                 }}
+        #             ]
+        #         }
+        #     },
+        #     "size": query_return_size,
+        # },
+        #
+        # "疾病+基因变体原始字段(不严格匹配)": {
+        #     "query": {
+        #         "bool": {
+        #             "must": [
+        #                 {"bool": {
+        #                     "should": [
+        #                         {"match": {"title": disease}},
+        #                         {"match": {"summary": disease}},
+        #                         {"match": {"detailed_description": disease}},
+        #                         {"match": {"criteria": disease}},
+        #                         {"match": {"condition": disease}},
+        #                     ]
+        #                 }},
+        #                 {"bool": {
+        #                     "should": [
+        #                         {"match": {"title": gene_raw}},
+        #                         {"match": {"summary": gene_raw}},
+        #                         {"match": {"detailed_description": gene_raw}},
+        #                         {"match": {"criteria": gene_raw}}
+        #                     ]
+        #                 }}
+        #             ]
+        #         }
+        #     },
+        #     "size": query_return_size,
+        # },
 
         "基因+变体": {
             "query": {
@@ -311,10 +311,14 @@ def es_search_by_topic(topic: dict):
             # 按年龄性别筛选
             if doc_gender == "any" or doc_gender == gender.lower() and \
                     doc_min_age <= age <= doc_max_age:
-                new_doc = dict(**doc["_source"])
-                new_doc["_score"] = doc["_score"]
+                # 只保留这三个域
+                new_doc = {
+                    "ntc_id": doc["_source"]["ntc_id"],
+                    "summary": doc["_source"]["summary"],
+                    "_score": doc["_score"],
+                }
                 doc_list.append(new_doc)
-                result_of_each_query[key] = doc_list
+        result_of_each_query[key] = doc_list
     return result_of_each_query
 
 
@@ -340,9 +344,9 @@ def es_search(topics:list):
 
 if __name__=="__main__":
     topics = topics_to_preprocessed_structure(config.topic_path[2018])
-    results = es_search(topics)
+    result_of_each_topic = es_search(topics)
 
     topic_and_result = []
-    for t, r in zip(topics, results):
+    for t, r in zip(topics, result_of_each_topic):
         topic_and_result.append({"topic": t, "result": r})
 
