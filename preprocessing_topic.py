@@ -74,6 +74,53 @@ def topics_to_preprocessed_structure(xml_path: str):
     return topics
 
 
+def input_topic():
+    # 疾病
+    disease = None
+    while not isinstance(disease, str) or not disease:
+        disease = input("请输入要查询的疾病：")
+    # 性别
+    gender = ""
+    while not gender in (("male", "female", "any")):
+        gender = input("请输入患者性别(male/female/any)：")
+    # 年龄
+    age = -1
+    while not (isinstance(age, int) and age>=0):
+        age = input("请输入患者年龄（一个整数）：")
+        age = int(age) if age.isdigit() else age
+    # 基因
+    gene_num = -1
+    gene_variant_list = []
+    gene_raw = []
+    while not (isinstance(gene_num, int) and gene_num>0):
+        gene_num = input("请输入需要查询的基因数量（大于0的整数）：")
+        gene_num = int(gene_num) if gene_num.isdigit() else gene_num
+    for i in range(1, gene_num+1):
+        gene = None
+        while not isinstance(gene, str):
+            gene = input(f"请输入基因{i}(可以为空，或者以字母开头，可由大写字母，数字，横线-_组成的字符串)：")
+        variant = None
+        if not gene:
+            while not isinstance(variant, str) or not variant:
+                variant = input(f"请输入基因{i}的变体(不可以为空)：")
+        else:
+            while not isinstance(variant, str):
+                variant = input(f"请输入基因{i} {gene}的变体(可以为空)：")
+        gene_raw.append(" ".join([gene, variant]))
+        gene_variant_list.append({"gene": gene, "variant": variant})
+    gene_raw = ", ".join(gene_raw)
+
+    return [{
+            "topic_id": -1,
+            "disease": disease,
+            "gene": gene_raw,
+            "age": age,
+            "gender": gender,
+
+            "gene_variant": gene_variant_list,
+        }]
+
+
 if __name__ == "__main__":
     topics ={2017: topics_to_preprocessed_structure(config.topic_path[2017]),
              2018: topics_to_preprocessed_structure(config.topic_path[2018])}
@@ -81,3 +128,7 @@ if __name__ == "__main__":
         print(t["gene"])
         print(t["gene_variant"])
         print("")
+
+    # 输入的topic
+    my_topic = input_topic()
+    print(my_topic)
