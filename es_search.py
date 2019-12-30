@@ -9,6 +9,7 @@ import json
 from pprint import pprint
 from collections import defaultdict
 from itertools import chain
+from tqdm import tqdm
 
 from configs.config import config
 from preprocessing_topic import topics_to_preprocessed_structure
@@ -332,14 +333,13 @@ def es_search(topics:list):
     query_return_size = 4000
     result_of_each_topic=[]
 
-    for i in range(len(topics)):
+    for i in tqdm(range(len(topics)), desc="ElasticSearch Query Topics:"):
         result_under_a_topic = es_search_by_topic(topics[i])
-        # print(json.dumps(result, indent=2, ensure_ascii=False))
-        print(f"""topic {i}""")
-        for k in result_under_a_topic.keys():
-            print(f"""{k}: {len(result_under_a_topic[k])}""")
-        print("")
         result_of_each_topic.append(result_under_a_topic)
+        # print(f"""topic {i}""")
+        # for k in result_under_a_topic.keys():
+        #     print(f"""{k}: {len(result_under_a_topic[k])}""")
+        # print("")
 
     # pprint("返回查询结果：{}".format(results))
     return result_of_each_topic

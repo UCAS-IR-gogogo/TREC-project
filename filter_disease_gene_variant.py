@@ -2,10 +2,12 @@
 借助不同粒度的查询结果，通过疾病，基因，变体，性别，年龄，过滤es查询结果
 """
 from collections import OrderedDict
+from pprint import pprint
 
 from configs.config import config
 from preprocessing_topic import topics_to_preprocessed_structure
 from es_search import es_search
+from eval import write2file, trec_eval, trec_eval_shell
 
 # 对一个topic的doc进行整合
 def filter_disease_gene_variant_by_topic(result_of_topic: dict):
@@ -48,14 +50,23 @@ def filter_disease_gene_variant(result_of_each_topic: list):
     for i,r in enumerate(result_of_each_topic):
         doc_list = filter_disease_gene_variant_by_topic(r)
         new_result_of_each_topic.append(doc_list)
-        print(f"""topic {i}: {len(doc_list)} docs""")
+        # print(f"""topic {i}: {len(doc_list)} docs""")
     return new_result_of_each_topic
 
 
 if __name__=="__main__":
-    topics: list = topics_to_preprocessed_structure(config.topic_path[2018])
+    year = 2018
+    topics: list = topics_to_preprocessed_structure(config.topic_path[year])
     result_of_each_topic:list = es_search(topics)
     result_of_each_topic: list = filter_disease_gene_variant(result_of_each_topic)
-    # topic0 = result_of_each_topic[0].values()
-    # print(topic0[1])
+
+
+    # 评测
+    write2file(result_of_each_topic, config.runs_path[year])
+    metrics = trec_eval(config.runs_path[year], config.qrels_path[year])
+    # pprint(metrics)
+    metrics_str = trec_eval_shell(config.runs_path[year], config.qrels_path[year], config.metrics_path[year])
+    print(metrics_str)
+#    exit()
+
 
