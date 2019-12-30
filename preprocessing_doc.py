@@ -96,6 +96,8 @@ def preprocessing_age(example:dict):
             r_max_age=re.compile("(\d+).*")
             max_age = r_max_age.findall(max_age)[0]
             example['max_age']=max_age
+        example["min_age"] = int(example["min_age"])
+        example["max_age"] = int(example["max_age"])
     return example
 
 #性别预处理，统一处理成Male，Female，Any
