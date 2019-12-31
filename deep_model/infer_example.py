@@ -10,7 +10,7 @@ from configs.config import config
 
 class Inferer:
     """A simple inference example"""
-    def __init__(self, opt):
+    def __init__(self, opt, use_retrain_parameter:bool=False):
         self.opt = opt
         self.tokenizer = build_tokenizer(
             fnames=[opt.dataset_file['train'], opt.dataset_file['test']],
@@ -23,10 +23,12 @@ class Inferer:
             dat_fname=config.deep_model_dir / '{0}_{1}_embedding_matrix.dat'.format(str(opt.embed_dim), opt.dataset))
         self.model = opt.model_class(embedding_matrix, opt)
         print('loading model {0} ...'.format(opt.model_name))
+        state_dict_path = model_state_dict_paths["retrain"] if use_retrain_parameter else model_state_dict_paths["best"]
+        print(f"use parameter {state_dict_path.absolute()}")
         if not torch.cuda.is_available():
-            self.model.load_state_dict(torch.load(opt.state_dict_path, map_location = torch.device('cpu')))
+            self.model.load_state_dict(torch.load(state_dict_path, map_location = torch.device('cpu')))
         else:
-            self.model.load_state_dict(torch.load(opt.state_dict_path))
+            self.model.load_state_dict(torch.load(state_dict_path))
         self.model = self.model.to(opt.device)
         # switch model to evaluation mode
         self.model.eval()
@@ -53,7 +55,8 @@ model_classes = {
 }
 # set your trained models here
 model_state_dict_paths = {
-    'cnn': config.deep_model_dir / 'state_dict/cnn_PM_acc0.612',
+    'retrain': config.deep_model_dir / 'state_dict/cnn_PM',
+    "best": config.deep_model_dir / 'state_dict_best/cnn_PM',
 }
 class Option(object): pass
 opt = Option()
@@ -64,7 +67,7 @@ opt.dataset_file = {
     'train': config.deep_model_dir / 'dataset/description2017.txt',
     'test': config.deep_model_dir / 'dataset/description2018.txt',
 }
-opt.state_dict_path = model_state_dict_paths[opt.model_name]
+# opt.state_dict_path = model_state_dict_paths[opt.model_name]
 opt.embed_dim = 300
 opt.hidden_dim = 300
 opt.max_seq_len = 100

@@ -11,7 +11,6 @@ from es_search import es_search
 from eval import write2file, trec_eval, trec_eval_shell
 from deep_model.infer_example import opt, Inferer
 
-inf = Inferer(opt)
 
 # 对一个topic的doc进行打分和ranking，基于四个粒度的query进行打分
 def ranking_and_filter_disease_gene_variant_by_topic(result_of_topic: dict):
@@ -56,24 +55,25 @@ def ranking_and_filter_disease_gene_variant_by_topic(result_of_topic: dict):
 
 
 # 用深度模型过滤掉非PM文档
-def filter_deep_model(doc_list_under_topic: list):
+def filter_deep_model(inference, doc_list_under_topic: list):
     new_docs = []
     for doc in doc_list_under_topic:
-        category = inf.evaluate(doc['summary']).squeeze(1)
+        category = inference.evaluate(doc['summary']).squeeze(1)
         if category == 1:
             new_docs.append(doc)
     return new_docs
 
 
 # 对每个topic下的doc都进行整合，进行ranking和过滤
-def ranking_and_filter_all_topics(result_of_each_topic: dict, use_deep_model:bool=True):
+def ranking_and_filter_all_topics(result_of_each_topic: dict, use_deep_model:bool=True, use_retrain_parameter:bool=False):
+    inf = Inferer(opt, use_retrain_parameter=use_retrain_parameter)
     new_result_of_each_topic = dict()
     for i,r in tqdm(result_of_each_topic.items(), desc="Filter and Ranking:"):
         # 按不同粒度的查询的分数相加进行ranking
         doc_list = ranking_and_filter_disease_gene_variant_by_topic(r)
         # 用深度模型过滤是否是pm
         if use_deep_model:
-            doc_list = filter_deep_model(doc_list)
+            doc_list = filter_deep_model(inference=inf, doc_list_under_topic=doc_list)
         new_result_of_each_topic[i] = doc_list
         # print(f"""topic {i}: {len(doc_list)} docs""")
     return new_result_of_each_topic

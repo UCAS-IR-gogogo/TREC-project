@@ -13,14 +13,14 @@ from es_search import es_search
 from ranking_and_filter import ranking_and_filter_all_topics
 from eval import write2file, trec_eval, trec_eval_shell
 
-def search_and_eval(topics_dict: dict, print_topics: bool=False):
+def search_and_eval(topics_dict: dict, print_topics: bool=False, use_retrain_parameter: bool=False):
     print(f"topic ids: {tuple(topics_dict.keys())}")
     if print_topics:
         pprint(topics_dict)
     # es查询
     result_of_each_topic: dict = es_search(topics_dict)
     # 对结果进行排序和过滤
-    result_of_each_topic: dict = ranking_and_filter_all_topics(result_of_each_topic, use_deep_model=use_deep_model)
+    result_of_each_topic: dict = ranking_and_filter_all_topics(result_of_each_topic, use_deep_model=use_deep_model, use_retrain_parameter=use_retrain_parameter)
 
     # 评测
     # 生成runs文件
@@ -45,6 +45,7 @@ if __name__ == "__main__":
     parser.add_argument("--run_all", action="store_true", help="自动运行全部topic")
     parser.add_argument("--create_index", action="store_true", help="构建索引")
     parser.add_argument("--print_topics", action="store_true", help="打印所有的topic（太多了所以默认不打印）")
+    parser.add_argument("--use_retrain_parameter", action="store_true", help="使用重新训练生成的深度模型参数")
     args = parser.parse_args()
 
     # doc导入es构建索引
@@ -78,10 +79,10 @@ if __name__ == "__main__":
         # 五折的sub—topic
         for sub_topic_ids in fold:
             sub_topics_dict = {tid: topics_dict[tid] for tid in sub_topic_ids}
-            metrics = search_and_eval(sub_topics_dict, print_topics=args.print_topics)
+            metrics = search_and_eval(sub_topics_dict, print_topics=args.print_topics, use_retrain_parameter=args.use_retrain_parameter)
 
         # 全量topic
-        metrics = search_and_eval(topics_dict, print_topics=args.print_topics)
+        metrics = search_and_eval(topics_dict, print_topics=args.print_topics, use_retrain_parameter=args.use_retrain_parameter)
     else:
         print("请用--demo 运行demo，或--run_all一键运行全部topic")
 
