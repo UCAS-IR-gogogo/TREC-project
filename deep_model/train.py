@@ -1,5 +1,5 @@
 from sklearn import metrics
-from deep_model.data_utils import build_tokenizer, build_embedding_matrix, ABSADataset
+from data_utils import build_tokenizer, build_embedding_matrix, ABSADataset
 import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader
@@ -10,7 +10,7 @@ import argparse
 import math
 import os
 
-from deep_model.models.cnn import CNN
+from models.cnn import CNN
 
 
 class Instructor:
@@ -20,7 +20,7 @@ class Instructor:
         tokenizer = build_tokenizer(
             fnames=[opt.dataset_file['train'], opt.dataset_file['test']],
             max_seq_len=opt.max_seq_len,
-            dat_fname='{0}_tokenizer.dat'.format(opt.dataset))
+            dat_fname='{0}_tokenizer_train.dat'.format(opt.dataset))
         embedding_matrix = build_embedding_matrix(
             word2idx=tokenizer.word2idx,
             embed_dim=opt.embed_dim,
