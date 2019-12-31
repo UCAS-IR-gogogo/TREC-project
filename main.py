@@ -42,6 +42,7 @@ if __name__ == "__main__":
 
     parser = ArgumentParser()
     parser.add_argument("--demo", action="store_true", help="以demo模式运行，不构建索引，topic需要手动输入。运行demo前需要先用--create_index参数构建索引。如果已经构建了索引，或者已经以非demo的一键式脚本运行过，则不需要再次构建索引")
+    parser.add_argument("--run_all", action="store_true", help="自动运行全部topic")
     parser.add_argument("--create_index", action="store_true", help="构建索引")
     parser.add_argument("--print_topics", action="store_true", help="打印所有的topic（太多了所以默认不打印）")
     args = parser.parse_args()
@@ -61,7 +62,7 @@ if __name__ == "__main__":
             p = f"""{i}  ntc_id: {doc["ntc_id"]}\n    Title: {doc["title"]}\n"""
             print(p)
 
-    else:
+    elif args.run_all:
         # 五折交叉
         fold = [
             (40, 5, 27, 8, 29, 13, 34, 36, 20, 15),
@@ -81,6 +82,8 @@ if __name__ == "__main__":
 
         # 全量topic
         metrics = search_and_eval(topics_dict, print_topics=args.print_topics)
+    else:
+        print("请用--demo 运行demo，或--run_all一键运行全部topic")
 
 
 
