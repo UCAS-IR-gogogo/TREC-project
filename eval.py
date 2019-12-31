@@ -28,6 +28,8 @@ def trec_eval(runs_file_path: Path or str, qrels_file_path: Path or str):
     metrics["P@15"] = results.get_precision(15)
     metrics["bpref"] = results.get_bpref()
     metrics["map"] = results.get_map()
+
+    metrics = {k: round(v, 4) for k,v in metrics.items()}
     return metrics
 
 # 编译并运行c语言版trec_eval，读取重定向的评测结果返回

@@ -13,17 +13,23 @@ from deep_model.infer_example import opt, Inferer
 
 inf = Inferer(opt)
 
-# 对一个topic的doc进行整合
-def filter_disease_gene_variant_by_topic(result_of_topic: dict):
+# 对一个topic的doc进行打分和ranking，基于四个粒度的query进行打分
+def ranking_and_filter_disease_gene_variant_by_topic(result_of_topic: dict):
     # 疾病 + 基因 + 变体
     # 疾病 + 基因(如果疾病 + 基因是0则返回疾病 + 变体)
     # 基因 + 变体
     # 如果结果少于15个则再加上这个条件：基因(如果基因是0则返回变体)
-    keys_order = [
+
+    # 必须要用的粒度
+    keys_order_must = [
         "疾病+基因+变体",
-        "疾病+基因" if len(result_of_topic["疾病+基因"])>0 else "疾病+变体",
+        "疾病+基因" if len(result_of_topic["疾病+基因"]) > 0 else "疾病+变体",
+    ]
+
+    # 少于15个结果时再加上的粒度
+    keys_order_less_than_15 = [
         "基因+变体",
-        # "基因" if len(result_of_topic["基因"])>0 else "变体"
+        "基因" if len(result_of_topic["基因"]) > 0 else "变体",
     ]
 
     # 把doc添加到doc_list里
@@ -33,16 +39,17 @@ def filter_disease_gene_variant_by_topic(result_of_topic: dict):
         else:
             new_docs_dict[doc["ntc_id"]]["_score"] += doc["_score"]
 
+    # 必须要用的粒度
     new_docs_dict = dict()
-    for query_condition in keys_order:
+    for query_condition in keys_order_must:
         for doc in result_of_topic[query_condition]:
             append_doc(doc, new_docs_dict)
 
-    # 如果结果太少则把基因或变体字段也加上
-    if len(new_docs_dict) <= 15:
-        query_condition = "基因" if len(result_of_topic["基因"])>0 else "变体"
-        for doc in result_of_topic[query_condition]:
-            append_doc(doc, new_docs_dict)
+    # 如果小于15个结果再加上的粒度
+    for query_condition in keys_order_less_than_15:
+        if len(new_docs_dict) <= 15:
+            for doc in result_of_topic[query_condition]:
+                append_doc(doc, new_docs_dict)
 
     new_docs_dict = sorted(new_docs_dict.values(), key=lambda x:x["_score"], reverse=True)
     return new_docs_dict
@@ -58,11 +65,13 @@ def filter_deep_model(doc_list_under_topic: list):
     return new_docs
 
 
-# 对每个topic的doc都进行整合
-def filter_all_topics(result_of_each_topic: dict, use_deep_model:bool=True):
+# 对每个topic下的doc都进行整合，进行ranking和过滤
+def ranking_and_filter_all_topics(result_of_each_topic: dict, use_deep_model:bool=True):
     new_result_of_each_topic = dict()
     for i,r in tqdm(result_of_each_topic.items(), desc="Filter and Ranking:"):
-        doc_list = filter_disease_gene_variant_by_topic(r)
+        # 按不同粒度的查询的分数相加进行ranking
+        doc_list = ranking_and_filter_disease_gene_variant_by_topic(r)
+        # 用深度模型过滤是否是pm
         if use_deep_model:
             doc_list = filter_deep_model(doc_list)
         new_result_of_each_topic[i] = doc_list
@@ -75,14 +84,7 @@ if __name__=="__main__":
     use_deep_model=False
     topics_dict: dict = topics_to_preprocessed_structure(config.topic_path[year])
     result_of_each_topic:dict = es_search(topics_dict)
-    result_of_each_topic: dict = filter_all_topics(result_of_each_topic, use_deep_model=use_deep_model)
-    fold = [
-        [40, 5, 27, 8, 29, 13, 34, 36, 20, 15],
-        [4, 47, 1, 14, 9, 39, 22, 11, 49, 25],
-        [21, 3, 32, 23, 19, 10, 12, 38, 26, 16],
-        [2, 17, 7, 50, 45, 48, 31, 18, 42, 41],
-        [6, 33, 37, 28, 30, 43, 44, 46, 35, 24]
-    ]
+    result_of_each_topic: dict = ranking_and_filter_all_topics(result_of_each_topic, use_deep_model=use_deep_model)
 
     # 评测
     write2file(result_of_each_topic, config.runs_path[year])

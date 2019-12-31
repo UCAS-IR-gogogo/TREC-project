@@ -113,21 +113,21 @@ def input_topic():
         gene_variant_list.append({"gene": gene, "variant": variant})
     gene_raw = ", ".join(gene_raw)
 
-    return [{
-            "topic_id": -1,
+    return {0: {
+            "topic_id": 0,
             "disease": disease,
             "gene": gene_raw,
             "age": age,
             "gender": gender,
 
             "gene_variant": gene_variant_list,
-        }]
+        }}
 
 
 if __name__ == "__main__":
     topics ={2017: topics_to_preprocessed_structure(config.topic_path[2017]),
              2018: topics_to_preprocessed_structure(config.topic_path[2018])}
-    for t in topics[2018]:
+    for t in topics[2018].values():
         print(t["gene"])
         print(t["gene_variant"])
         print("")
