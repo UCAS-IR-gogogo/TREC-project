@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
+
 # 安装docker
-# 注：我的docker已经装好了。不确定这个命令能不能安装成功
-curl -fsSL https://get.docker.com -o get-docker.sh
-sudo sh get-docker.sh
+# 注：我的docker很久以前已经装好了。如果没安装docker可能需要用下面两行安装docker
+# curl -fsSL https://get.docker.com -o get-docker.sh
+# sudo sh get-docker.sh
 
 # 获取ElasticSearch镜像
 docker pull elasticsearch:6.5.0  # pull es docker镜像
