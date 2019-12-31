@@ -3,13 +3,15 @@
 """
 from collections import OrderedDict
 from pprint import pprint
+from tqdm import tqdm
 
 from configs.config import config
 from preprocessing_topic import topics_to_preprocessed_structure
 from es_search import es_search
 from eval import write2file, trec_eval, trec_eval_shell
-from deep_model.infer_example import classify
+from deep_model.infer_example import opt, Inferer
 
+inf = Inferer(opt)
 
 # 对一个topic的doc进行整合
 def filter_disease_gene_variant_by_topic(result_of_topic: dict):
@@ -50,21 +52,20 @@ def filter_disease_gene_variant_by_topic(result_of_topic: dict):
 def filter_deep_model(doc_list_under_topic: list):
     new_docs = []
     for doc in doc_list_under_topic:
-        # category = inf.evaluate(doc['summary']).squeeze(1)
-        category = classify(doc['summary'])
+        category = inf.evaluate(doc['summary']).squeeze(1)
         if category == 1:
             new_docs.append(doc)
     return new_docs
 
 
 # 对每个topic的doc都进行整合
-def filter_disease_gene_variant(result_of_each_topic: list, use_deep_model:bool=True):
-    new_result_of_each_topic = []
-    for i,r in enumerate(result_of_each_topic):
+def filter_all_topics(result_of_each_topic: dict, use_deep_model:bool=True):
+    new_result_of_each_topic = dict()
+    for i,r in tqdm(result_of_each_topic.items(), desc="Filter and Ranking:"):
         doc_list = filter_disease_gene_variant_by_topic(r)
         if use_deep_model:
             doc_list = filter_deep_model(doc_list)
-        new_result_of_each_topic.append(doc_list)
+        new_result_of_each_topic[i] = doc_list
         # print(f"""topic {i}: {len(doc_list)} docs""")
     return new_result_of_each_topic
 
@@ -73,8 +74,8 @@ if __name__=="__main__":
     year = 2018
     use_deep_model=False
     topics_dict: dict = topics_to_preprocessed_structure(config.topic_path[year])
-    result_of_each_topic:list = es_search(list(topics_dict.values()))
-    result_of_each_topic: list = filter_disease_gene_variant(result_of_each_topic, use_deep_model=use_deep_model)
+    result_of_each_topic:dict = es_search(topics_dict)
+    result_of_each_topic: dict = filter_all_topics(result_of_each_topic, use_deep_model=use_deep_model)
     fold = [
         [40, 5, 27, 8, 29, 13, 34, 36, 20, 15],
         [4, 47, 1, 14, 9, 39, 22, 11, 49, 25],

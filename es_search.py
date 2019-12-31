@@ -326,16 +326,16 @@ def es_search_by_topic(topic: dict):
 
 
 
-def es_search(topics:list):
+def es_search(topics:dict):
     es = Elasticsearch()
     index_name = config.index_name
     type_name = config.type_name
     query_return_size = 4000
-    result_of_each_topic=[]
+    result_of_each_topic=dict()
 
-    for i in tqdm(range(len(topics)), desc="ElasticSearch Query Topics:"):
+    for i in tqdm(topics.keys(), desc="ElasticSearch Query Topics:"):
         result_under_a_topic = es_search_by_topic(topics[i])
-        result_of_each_topic.append(result_under_a_topic)
+        result_of_each_topic[topics[i]["topic_id"]] = result_under_a_topic
         # print(f"""topic {i}""")
         # for k in result_under_a_topic.keys():
         #     print(f"""{k}: {len(result_under_a_topic[k])}""")

@@ -5,12 +5,12 @@ import os
 from configs.config import config
 
 # 将查询结果写入为trec runs文件
-def write2file(data, runs_file_path: Path or str):
+def write2file(data: dict, runs_file_path: Path or str):
     f = open(runs_file_path, 'w', encoding='utf-8')
-    for i in range(len(data)):
-        topic = data[i]
+    for tid in data.keys():
+        topic = data[tid]
         for j, dict in enumerate(topic):
-            topic_id = str(i+1)
+            topic_id = str(tid)
             doc_id = dict['ntc_id']
             score = round(dict['_score'], 4)
             res = " ".join([topic_id, 'Q0', doc_id, str(j), str(score), 'my_run'])
