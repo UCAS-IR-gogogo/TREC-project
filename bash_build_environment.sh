@@ -11,6 +11,6 @@ docker run --name ES -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" e
 curl -X GET localhost:9200  # 测试是否安装成功
 
 # python需要的包
-conda create -n IR -python=3.7
-conda activate IR
-pip install -r requirements.txt
+conda create -n IR -python=3.7  # 创建新的python环境
+conda activate IR  # 激活新的环境
+pip install -r requirements.txt  # 安装所有需要的python库
