@@ -1,0 +1,52 @@
+{
+            "mappings": {
+                "document": {
+                    "properties": {
+                        "ntc_id": {
+                            "type": "keyword",
+                            "index": "true"
+                        },
+                        "title": {
+                            "type": "text",
+                            "index": "true"
+                        },
+                        "condition": {
+                            "type": "text",
+                            "index": "true"
+                        },
+                        "condition_chinese": {
+                            "type": "text",
+                            "index": "true"
+                        },
+                        "intervention": {
+                            "type": "text",
+                            "index": "true"
+                        },
+                        "summary": {
+                            "type": "text",
+                            "index": "true"
+                        },
+                        "detailed_description": {
+                            "type": "text",
+                            "index": "true"
+                        },
+                        "gender": {
+                            "type": "keyword",
+                            "index": "true"
+                        },
+                        "min_age": {
+                            "type": "integer",
+                            "index": "true"
+                        },
+                        "max_age": {
+                            "type": "integer",
+                            "index": "true"
+                        },
+                        "criteria": {
+                            "type": "text",
+                            "index": "true"
+                        }
+                    }
+                }
+            }
+}
